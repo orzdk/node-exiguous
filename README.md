@@ -32,7 +32,7 @@ Exiguous-node jobs only have two keys, - "adapterid" and "hex". Adapterid tells 
 ### tl;dr
 clone repo  
 npm install  
-configure stuff
+configure stuff  
 node server  
 
 ### Running the scenarios
@@ -91,7 +91,7 @@ Exiguous root has a few other folders & files to have a peek at:
 \json.jobs: The job specification we visited earlier  
 \json.wallet: The nodes wallet. Contains your PK if demo successfully setup. Be extremely careful not to commit your private keys to github !  
 \lib: "External" libraries. For now easyadapter.js and orzdb.js.   
-\img: images for this documentation
+\img: images for this documentation  
 .\server.js: Exiguous runtime  
 
 ### EasyAdapter templates
