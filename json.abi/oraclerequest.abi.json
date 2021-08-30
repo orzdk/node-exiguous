@@ -1,0 +1,52 @@
+{
+    "anonymous": false,
+    "name": "OracleRequest",
+    "type": "event",
+    "inputs": [
+        {
+            "indexed": true,
+            "name": "specId",
+            "type": "bytes32"
+        },
+        {
+            "indexed": false,
+            "name": "requester",
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "name": "requestId",
+            "type": "bytes32"
+        },
+        {
+            "indexed": false,
+            "name": "payment",
+            "type": "uint256"
+        },
+        {
+            "indexed": false,
+            "name": "callbackAddr",
+            "type": "address"
+        },
+        {
+            "indexed": false,
+            "name": "callbackFunctionId",
+            "type": "bytes4"
+        },
+        {
+            "indexed": false,
+            "name": "cancelExpiration",
+            "type": "uint256"
+        },
+        {
+            "indexed": false,
+            "name": "dataVersion",
+            "type": "uint256"
+        },
+        {
+            "indexed": false,
+            "name": "data",
+            "type": "bytes"
+        }
+    ]
+}

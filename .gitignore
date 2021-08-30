@@ -1,3 +1,9 @@
+# Custom
+json.wallet/*.ea.json
+json.adapters/*.ea.json
+build
+scrap*
+
 # Logs
 logs
 *.log

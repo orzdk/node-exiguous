@@ -1,0 +1,175 @@
+[{  
+
+    "fullScript": true,    
+    "importAuthEncrypted": false,
+    "importAuthSecret": "demo",
+    "adapterid": "g2_adapter",
+    "title": "EasyAdapter",
+    "description": "EasyAdapter",
+    "returns": "EasyAdapter",
+
+    "authentications": [{
+        "authid": "v2_rapidapi_subscription",        
+        "description": "Default",
+        "headersauth":  {"x-rapidapi-key":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+    }],
+
+    "apis": [
+        {
+            "apid": "v2_rapidapi_api_basketball",            
+            "title": "API-BASKETBALL@RapidAPI",
+            "description": "RapidAPI Basketball API (Game Result)",
+            "docUrl": "https://rapidapi.com/api-sports/api/api-basketball/",
+            "url": "https://api-basketball.p.rapidapi.com/games",
+            "urlHeaders": { "x-rapidapi-host": "api-basketball.p.rapidapi.com" },
+            "priority": true
+        },
+        {
+            "apid": "v2_rapidapi_weatherapi_com",
+            "title": "RapidAPI WeatherAPI.com@RapidAPI",
+            "description": "RapidAPI Weather API (Temperature)",
+            "docUrl": "https://rapidapi.com/weatherapi/api/weatherapi-com/",
+            "url": "https://weatherapi-com.p.rapidapi.com/history.json",
+            "urlHeaders": { "x-rapidapi-host": "weatherapi-com.p.rapidapi.com" },
+            "priority": false
+        }
+    ],
+
+    "transformers": [
+        {
+            "transformid": "v2_rapidapi_basketball_transform",
+            "title": "Title",
+            "description": "Description",
+
+            "gameFinishedSampleField": "status.short",            
+            "gameFinishedSampleTriggers": ["FT","AOT"],
+
+            "windv": "score_compare",
+            "windv_h_samp": "scores.home.total",            
+            "windv_h_ret": "teams.home.name",
+            "windv_a_samp": "scores.away.total",
+            "windv_a_ret": "teams.away.name",
+
+            "root": [{ "idx": 0, "key": "response" }],
+
+            "output": [
+                {
+                    "$transform": "none", 
+                    "$field": "winteam",
+                    "$pad": ".",
+                    "$padLen": 16
+                },
+                {
+                    "$transform": "none", 
+                    "$field": "country.name",
+                    "$pad": ".",
+                    "$padLen": 16
+                }
+            ],
+
+            "store": [
+                {
+                    "$transform": "none", 
+                    "$field": "country.name",
+                    "$fStore": "countryName"
+                },
+                {
+                    "$transform": "t2", 
+                    "$field": "time",
+                    "$fStore": "gameTime"
+                },
+                {
+                    "$transform": "t10", 
+                    "$field": "date",
+                    "$fStore": "gameDate"
+                }         
+            ]
+
+        },
+        {
+            "transformid": "v2_rapidapi_weather_transform",
+            "title": "Title",
+            "description": "Description",
+
+            "root": [
+                {"idx": 0, "key": "forecast.forecastday"},
+                {"idx": 0, "key": "hour"}
+            ],  
+
+            "output": [{
+                "$transform": "none", 
+                "$field": "temp_c", 
+                "$pad": ".",
+                "$padLen": 32
+            }]         
+        }
+    ],
+
+    "specs": [{
+        "specid": "g2_spec",    
+        "objIndex": ["v2_rapidapi_api_basketball", "v2_rapidapi_weatherapi_com"],        
+        "configRecords": [
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 0,
+                "type": "queryParams",
+                "value": { "id": { "id": "id1" }}
+            },
+            {
+               "apid": "v2_rapidapi_weatherapi_com",    
+               "sequence": 0,
+               "type": "queryParams",
+               "value": { "dt": { "$fStore": "gameDate" }}
+            },
+            {
+               "apid": "v2_rapidapi_weatherapi_com",    
+               "sequence": 1,
+               "type": "queryParams",
+               "value": { "hour": { "$fStore": "gameTime" }}
+            },
+            {
+               "apid": "v2_rapidapi_weatherapi_com",    
+               "sequence": 2,
+               "type": "queryParams",
+                "value": { "q": { "$fStore": "countryName" }}
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 1,
+                "type": "outputMapping",
+                "value": { "$range": [0,32] }
+            },
+            {
+                "apid": "v2_rapidapi_weatherapi_com",                    
+                "sequence": 2,
+                "type": "outputMapping",
+                "value": { "$range": [0,32] }
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",
+                "sequence": 0,
+                "type": "transformMapping",
+                "value": { "$value": "v2_rapidapi_basketball_transform" }
+            },
+            {
+                "apid": "v2_rapidapi_weatherapi_com",
+                "sequence": 0,
+                "type": "transformMapping",
+                "value": { "$value": "v2_rapidapi_weather_transform" }
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 0,
+                "type": "authMapping",
+                "value": { "$value": "v2_rapidapi_subscription" }
+            },
+            {
+                "apid": "v2_rapidapi_weatherapi_com",                    
+                "sequence": 0,
+                "type": "authMapping",
+                "value": { "$value": "v2_rapidapi_subscription" }
+            }
+        ]
+    }]
+
+}]

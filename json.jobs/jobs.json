@@ -1,0 +1,13 @@
+{
+
+	"a0000000000000000000000000000122": {
+		"adapterid": "01_basket_simple_hex",
+		"hex": true
+	},
+
+	"a0000000000000000000000000000123": {
+		"adapterid": "02_basket_simple_string",
+		"hex": false
+	}
+
+}

@@ -1,0 +1,6 @@
+{   
+	"wssurl": "wss://rinkeby.infura.io/ws/v3/<APIKEY>",
+	"oracleAddress": "address",
+	"adr": "The adress that pays for the settlement calls",
+	"pk": "The private key of the address that pays for the settlement calls"
+}

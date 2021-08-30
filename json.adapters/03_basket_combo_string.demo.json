@@ -1,0 +1,95 @@
+[{  
+
+    "fullScript": true,    
+    "importAuthEncrypted": false,
+    "importAuthSecret": "demo",
+    "adapterid": "g2_adapter",
+    "title": "EasyAdapter",
+    "description": "EasyAdapter",
+    "returns": "EasyAdapter",
+
+    "authentications": [{
+        "authid": "v2_rapidapi_subscription",        
+        "description": "Default",
+        "headersauth":  {"x-rapidapi-key":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+    }],
+
+    "apis": [
+        {
+            "apid": "v2_rapidapi_api_basketball",            
+            "title": "API-BASKETBALL@RapidAPI",
+            "description": "RapidAPI Basketball API (Game Result)",
+            "docUrl": "https://rapidapi.com/api-sports/api/api-basketball/",
+            "url": "https://api-basketball.p.rapidapi.com/games",
+            "urlHeaders": { "x-rapidapi-host": "api-basketball.p.rapidapi.com" },
+            "priority": true
+        }
+    ],
+
+    "transformers": [
+        {
+            "transformid": "v2_rapidapi_basketball_transform",
+            "title": "Title",
+            "description": "Description",
+
+            "gameFinishedSampleField": "status.short",            
+            "gameFinishedSampleTriggers": ["FT","AOT"],
+
+            "windv": "score_compare",
+            "windv_h_samp": "scores.home.total",            
+            "windv_h_ret": "teams.home.name",
+            "windv_a_samp": "scores.away.total",
+            "windv_a_ret": "teams.away.name",
+
+            "root": [{ "idx": 0, "key": "response" }],
+
+            "output": [           
+                {
+                    "$transform": "none", 
+                    "$field": "winteam"
+                },
+                {
+                    "$transform": "literal", 
+                    "$field": "_"
+                },
+                {
+                    "$transform": "none", 
+                    "$field": "country.name"
+                }
+            ]
+
+        }
+    ],
+
+    "specs": [{
+        "specid": "g2_spec",    
+        "objIndex": ["v2_rapidapi_api_basketball", "v2_rapidapi_weatherapi_com"],        
+        "configRecords": [
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 0,
+                "type": "queryParams",
+                "value": { "id": { "id": "id1" }}
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 1,
+                "type": "outputMapping",
+                "value": { "$range": [0,64] }
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",
+                "sequence": 0,
+                "type": "transformMapping",
+                "value": { "$value": "v2_rapidapi_basketball_transform" }
+            },
+            {
+                "apid": "v2_rapidapi_api_basketball",                    
+                "sequence": 0,
+                "type": "authMapping",
+                "value": { "$value": "v2_rapidapi_subscription" }
+            }
+        ]
+    }]
+
+}]

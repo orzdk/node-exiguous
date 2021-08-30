@@ -1,0 +1,152 @@
+[{  
+    "fullScript": true,    
+    "importAuthEncrypted": false, 
+    "importAuthSecret": "demo",
+    "adapterid": "g2_adapter",
+    "title": "EasyAdapter",
+    "description": "EasyAdapter",
+    "returns": "EasyAdapter",
+
+    "authentications": [{
+        "authid": "etherscan_verify_aut",
+        "description": "EtherScan Authenticator",
+        "title": "EtherScan Authenticator",
+        "queryParamAuth": [{ "apikey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" }]
+    }],
+
+    "apis": [
+        {
+           "description": "etherscan_verify",
+           "ownaccid": "mnlck220kf",
+           "title": "EasyAdapter Etherscan Verify",
+           "url": "https://api.etherscan.io/api",
+           "apid": "etherscan_verify_api"
+        }
+    ],
+
+    "transformers": [
+          {
+           "transformid": "etherscan_verify_tra",            
+           "title": "Title",
+           "description": "Description",
+           "output": [
+                {
+                 "$transform": "none",
+                 "$field": "message"
+                }
+           ]
+          },
+          {
+           "transformid": "etherscan_verify_tra_obj",        
+           "title": "Title",
+           "description": "Description",    
+           "parseRoot": true,
+           "noTransform": true,            
+           "root": [
+            {
+             "idx": -1,   
+             "key": "result"
+            }
+           ]
+          }
+    ],
+     "specs": [
+        {
+           "specid": "etherscan_verify",
+           "objIndex": "etherscan_verify_api", 
+           "configRecords": [
+            {
+             "sequence": 0,
+             "type": "outputMapping",
+             "value": {"$range": [0,0]},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 0,
+             "type": "queryParams",
+             "value": {"$authQueryString": "apikey"},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 1,
+             "type": "queryParams",
+             "value": {"$literal": "module=contract"},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 2,
+             "type": "queryParams",
+             "value": {"$literal": "action=getabi"},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 3,
+             "type": "queryParams",
+             "value": {"address": {"id": "id1"}},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 0,
+             "type": "transformMapping",
+             "value": {"$value": "etherscan_verify_tra"},
+             "apid": "etherscan_verify_api"
+            },
+            {
+             "sequence": 0,
+             "type": "authMapping",
+             "value": {"$value": "etherscan_verify_aut"},
+             "apid": "etherscan_verify_api"
+            }
+           ]
+        },
+        {    
+           "specid": "etherscan_object",
+           "objIndex": "etherscan_verify_api",          
+           "configRecords": [
+                {
+                 "sequence": "1",
+                 "type": "outputMapping",
+                 "value": {"$fullObj": true},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": "1",
+                 "type": "queryParams",
+                 "value": {"$authQueryString": "apikey"},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": 2,
+                 "type": "queryParams",
+                 "value": {"$literal": "module=contract"},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": 3,
+                 "type": "queryParams",
+                 "value": {"$literal": "action=getabi"},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": 4,
+                 "type": "queryParams",
+                 "value": {"address": {"id": "id1"}},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": "8",
+                 "type": "transformMapping",
+                 "value": {"$value": "etherscan_verify_tra_obj"},
+                 "apid": "etherscan_verify_api"
+                },
+                {
+                 "sequence": 0,
+                 "type": "authMapping",
+                 "value": {"$value": "etherscan_verify_aut"},
+                 "apid": "etherscan_verify_api"
+                }              
+           ]
+        }
+    ]
+
+}]

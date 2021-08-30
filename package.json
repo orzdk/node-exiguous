@@ -1,0 +1,25 @@
+{
+  "name": "node-exiguous",
+  "version": "alpha.0.0.1",
+  "description": "node-exiguous",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orzdk/node-exiguous.git"
+  },
+  "author": "Jesper Christensen, orzdk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orzdk/node-exiguous/issues"
+  },
+  "homepage": "https://github.com/orzdk/node-exiguous#readme",
+  "dependencies": {
+    "cbor": "^8.0.0",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "web3": "^1.5.2"
+  }
+}
