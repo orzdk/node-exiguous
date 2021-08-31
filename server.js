@@ -102,7 +102,7 @@ ethTx = (oracleEvent, adapterData, hex) => {
         const requestId = oracleEvent.requestId.toString();
         
         const txData = Buffer.alloc(32);
-        const buf = hex ? Buffer.from(i.replace("0x",""), "hex") : Buffer.from(i);
+        const buf = hex ? Buffer.from(adapterData.data.replace("0x",""), "hex") : Buffer.from(adapterData.data);
         buf.copy(txData, txData.length - buf.length);
 
         const encodingMap = ["bytes32","uint256","address","bytes4","uint256","bytes32"];
