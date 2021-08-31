@@ -76,7 +76,7 @@ runLog = () => {
                     log("runLog:ethtx:go");
                     let decodedOracleEvent = decodeOracleEvent(event);
                     let eaData = await ea.easyAdapter(jobs[jobid].adapterid, decodedOracleEvent);               
-                    //ethTx(event, eaData, jobs[jobid].hex);            
+                    ethTx(event, eaData, jobs[jobid].hex);            
                 } else {
                     log("runLog:ethtx:skip");
                 }
