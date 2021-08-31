@@ -57,13 +57,13 @@
                     "$transform": "none", 
                     "$field": "winteam",
                     "$pad": ".",
-                    "$padLen": 16
+                    "$padLen": 8
                 },
                 {
                     "$transform": "none", 
                     "$field": "country.name",
                     "$pad": ".",
-                    "$padLen": 16
+                    "$padLen": 8
                 }
             ],
 
@@ -100,7 +100,7 @@
                 "$transform": "none", 
                 "$field": "temp_c", 
                 "$pad": ".",
-                "$padLen": 32
+                "$padLen": 16
             }]         
         }
     ],

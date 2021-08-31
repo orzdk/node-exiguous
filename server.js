@@ -20,7 +20,8 @@ const port = 1234;
 const newid = (x) => [...Array(x)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
 const log = (m) => console.log("Exiguous> " + m);
 
-var nonceAt = 0;
+var ignoreKnown = false;
+var busy = false;
 app.use(express.json())
 
 runLog = () => {
@@ -34,13 +35,12 @@ runLog = () => {
     }
 
     try{
-        let lastBlock = blockdb.orzdbGet("lastBlock");
-        if (!lastBlock) process.exit(); 
+        let startBlock = blockdb.orzdbGet("startBlock");
+        if (!startBlock) process.exit(); 
 
-        log("runLog:dbget:lastblock:" + lastBlock);
-        log("runlog:web3:nonce:" + nonceAt);
-
-        let subscription = web3.eth.subscribe("logs", {fromBlock: lastBlock, address: [wallet.oracleAddress], topics: []}, (err,event) => {});
+        log("runLog:dbget:startBlock:" + startBlock);
+        
+        let subscription = web3.eth.subscribe("logs", {fromBlock: startBlock, address: [wallet.oracleAddress], topics: []}, (err,event) => {});
 
         log("runLog:subscribed");
 
@@ -51,34 +51,33 @@ runLog = () => {
 
                 log("runLog:event:OracleRequest");
 
-                blockdb.orzdbSet("lastBlock", Number(eventData.blockNumber)+1, true);
+                blockdb.orzdbSet("startBlock", Number(eventData.blockNumber)+1, true);
                
                 let event = web3.eth.abi.decodeLog(oracleRequestEventABI.inputs, eventData.data, eventData.topics);
+
                 let warnKnownRequestId = reqdb.orzdbGet(event.requestId) ? event.requestId : undefined;
                 let warnKnownTxId = txdb.orzdbGet(eventData.transactionHash) ? eventData.transactionHash : undefined;
 
                 if (warnKnownRequestId){
                    log("runLog:error:known_requestid:" + warnKnownRequestId);
                 } else {
-                   log("runLog:info:new_request");
-                   reqdb.orzdbSet(warnKnownRequestId, true, true);
+                   reqdb.orzdbSet(event.requestId, true, true);
                 }
 
                 if (warnKnownTxId){
                    log("runLog:error:known_tx:" + warnKnownTxId);
                    warnKnownTxId = true;
                 } else {
-                   log("runLog:warning:new_tx");
-                   txdb.orzdbSet(warnKnownTxId, true, true);
+                   txdb.orzdbSet(eventData.transactionHash, true, true);
                 }
 
-                if (!warnKnownRequestId && !warnKnownTxId){
+                if (ignoreKnown || (!warnKnownRequestId && !warnKnownTxId)){
                     log("runLog:ethtx:go");
                     let decodedOracleEvent = decodeOracleEvent(event);
                     let eaData = await ea.easyAdapter(jobs[jobid].adapterid, decodedOracleEvent);               
                     ethTx(event, eaData, jobs[jobid].hex);            
                 } else {
-                    log("runLog:ethtx:skip");
+                    log("runLog:ethtx:skipknown");
                 }
 
                 log("runLog:~");
@@ -99,8 +98,15 @@ ethTx = (oracleEvent, adapterData, hex) => {
 
     try {
 
-        const requestId = oracleEvent.requestId.toString();
+        if (busy){
+            log("BUSY. ETHTX REJECTED");
+            return;
+        }
+
+        busy = true;
         
+        const requestId = oracleEvent.requestId.toString();  
+
         const txData = Buffer.alloc(32);
         const buf = hex ? Buffer.from(adapterData.data.replace("0x",""), "hex") : Buffer.from(adapterData.data);
         buf.copy(txData, txData.length - buf.length);
@@ -115,27 +121,38 @@ ethTx = (oracleEvent, adapterData, hex) => {
             txData
         ];
 
-        let encodedFunctionCall = oracleFulfillFunctionSig + web3.eth.abi.encodeParameters(encodingMap, encodingParms).replace("0x","");
+        web3.eth.getTransactionCount(wallet.adr, (err, nonce) => {
 
-        const tx = {
-            nonce:    web3.utils.toHex(nonceAt++),
-            to:       wallet.oracleAddress,
-            value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
-            gasLimit: web3.utils.toHex(5000000),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
-            data:     encodedFunctionCall
-        }
+            log("runlog:web3:nonce:" + nonce);
 
-        log("ethTx:tx_send...");
+            let encodedFunctionCall = oracleFulfillFunctionSig + web3.eth.abi.encodeParameters(encodingMap, encodingParms).replace("0x","");
 
-        web3.eth.accounts.signTransaction(tx, wallet.pk)
-        .then(signedTx => web3.eth.sendSignedTransaction(signedTx.rawTransaction))
-        .then(receipt => {
-          log("ethTx:tx_receipt:" + receipt.transactionHash); 
-          log("ethTx:tx_success:" + receipt.status + ":gas_used:" + receipt.gasUsed );
-          log("ethTx:~");
-          txdb.orzdbSet(requestId, true, true);
-        }).catch(err => {log("ethTx:error:sendSignedTransaction:");console.error(err);});
+            const tx = {
+                nonce:    web3.utils.toHex(nonce),
+                to:       wallet.oracleAddress,
+                value:    web3.utils.toHex(web3.utils.toWei('0', 'ether')),
+                gasLimit: web3.utils.toHex(5000000),
+                gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),
+                data:     encodedFunctionCall
+            }
+
+            log("ethTx:tx_send...");
+
+            web3.eth.accounts.signTransaction(tx, wallet.pk)
+            .then(signedTx => web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+            .then(receipt => {
+              log("ethTx:tx_receipt:" + receipt.transactionHash); 
+              log("ethTx:tx_success:" + receipt.status + ":gas_used:" + receipt.gasUsed );
+              log("ethTx:~");
+              txdb.orzdbSet(requestId, true, true);
+              busy = false;
+            }).catch(err => {
+                log("ethTx:error:sendSignedTransaction:");
+                console.error(err);
+                busy = false;
+            });
+
+        });
 
     } catch(e) {
         log("ethTx:unhandled:" + e);
@@ -162,7 +179,6 @@ api = () => {
 }
 
 web3.eth.getTransactionCount(wallet.adr, (err, nonce) => {
-    nonceAt = nonce;
     runLog();
     api();
 });
