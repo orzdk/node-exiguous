@@ -185,7 +185,7 @@ Concatenates into one 3-part fixed size, dot-padded string.
 Finds match results from basket-api and the weather of the day from weatherapi-com, using priority-based api_output->api_input parameter mapping  
 
 IN: {"data": {"spec": "g2_spec", "id1":"126782"}}  
-OUT: ".............171.............USA............................12.8"  
+OUT: ".....171.....USA............12.8"  
   
   
 ### 06_basket_advanced_hex.ea.json    
@@ -203,7 +203,7 @@ Fetches results from two api's and compares them. Simulated with cloned API's wi
 Concatenates into 3-part fixed size, dot-padded string  
   
 IN: {"data": {"spec": "g2_spec", "id1":"126782", "id2":"127438"}}  
-OUT: "data": "............1388............1388............................true"  
+OUT: "data": "....1388....1388............true"  
   
   
 ### 08_etherscan_verify.ea.json (verify-spec)   
