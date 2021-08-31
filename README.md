@@ -1,3 +1,7 @@
+*****************************************************************  
+Bugfixing, please await update. Apologies for any inconvenience.  
+*****************************************************************
+
 # node-exiguous
 Exiguous [scanty; meager; small; slender; very small in size or amount]
 
