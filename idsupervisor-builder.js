@@ -7,7 +7,7 @@ const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 const rapidapiHeaders = {
     "method": "GET",
     "headers":{
-        "x-rapidapi-key": "31d5d6cdb6mshc0b9afeb170180bp18aefcjsnc5c0059d7e03",
+        "x-rapidapi-key": "xxx",
         "x-rapidapi-host" : "api-basketball.p.rapidapi.com"
     } 
 }
@@ -16,7 +16,7 @@ const rapidapiHeadersLiveScore = {
     "method": "GET",
     "headers":{
         "x-rapidapi-host": "livescore-basketball.p.rapidapi.com",
-        "x-rapidapi-key": "31d5d6cdb6mshc0b9afeb170180bp18aefcjsnc5c0059d7e03"
+        "x-rapidapi-key": "xxx"
     }
 }
 
