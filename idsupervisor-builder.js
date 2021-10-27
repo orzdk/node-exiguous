@@ -1,24 +1,9 @@
 const fetch = require('node-fetch');
 const moment = require('moment');
 const fs = require("fs");
+const idsauth = require("./json.idsupervisor-auth/ids-auth.json");
 
 const wait = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
-
-const rapidapiHeaders = {
-    "method": "GET",
-    "headers":{
-        "x-rapidapi-key": "xxx",
-        "x-rapidapi-host" : "api-basketball.p.rapidapi.com"
-    } 
-}
-
-const rapidapiHeadersLiveScore = {
-    "method": "GET",
-    "headers":{
-        "x-rapidapi-host": "livescore-basketball.p.rapidapi.com",
-        "x-rapidapi-key": "xxx"
-    }
-}
 
 function fubarDateToUTC(dtt){
 
@@ -50,7 +35,7 @@ async function loadGameDayFromLiveScoreAPI(date){
     let url = "https://livescore-basketball.p.rapidapi.com/basketball/matches-by-date";
     url += "?date=" + date.replace(/-/g,"") + "&timezone_utc=0:00";
     
-    const opts = rapidapiHeadersLiveScore;
+    const opts = idsauth.livescoreapi;
     const res = await fetch(url, opts);
     const json = await res.json();
  
@@ -83,7 +68,7 @@ async function loadGameDayFromBasketAPI(date){
     
     let url = "https://api-basketball.p.rapidapi.com/games?date=" + date;
 
-    const opts = rapidapiHeaders;
+    const opts = idsauth.basketapi;
     const res = await fetch(url, opts);
     const json = await res.json();
 

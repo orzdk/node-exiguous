@@ -2,7 +2,7 @@
 json.wallet/*.ea.json
 json.adapters/*.ea.json
 json.idsupervisor-db/*.json
-
+json.idsupervisor-auth/ids-auth.json
 build
 scrap*
 
