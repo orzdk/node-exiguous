@@ -33,6 +33,4 @@ api = () => {
 
 }
 
-indices = loadDb();
-
 api();
